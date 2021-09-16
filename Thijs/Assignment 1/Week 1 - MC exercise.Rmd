@@ -1,0 +1,151 @@
+---
+title: "MC Simulation exercise"
+output: html_notebook
+---
+
+This exercise asks to do a Monte Carlo simulation on the confidence interval. 
+
+Before we start the exercise, we load in some packages.
+
+```{r}
+# needed packages
+library(ggplot2)
+library(tidyverse)
+```
+
+
+
+```{r}
+# MC - question 1
+
+# Function for Confidence interval table
+MC_exercise <- function(num_sim, seed){
+  
+  # set seed for reproducability
+  set.seed(seed)
+  
+  # make table to store
+  big_table <- matrix(data = 0, ncol = 4, nrow = num_sim)
+    
+  # draw random data
+    for(i in 1:num_sim){
+      samp <- rnorm(1000)
+      
+      # create data for table
+      big_table[i, 1] <- 0 - mean(samp)
+      big_table[i, 2] <- sqrt(var(samp))/sqrt(1000)
+      big_table[i, 3] <- mean(samp) - (1.96*(sqrt(var(samp))/sqrt(1000)))
+      big_table[i, 4] <- mean(samp) + (1.96*(sqrt(var(samp))/sqrt(1000)))
+    }
+  
+  # print outcome
+  print(as.data.frame(big_table))
+}
+
+# run with seed
+MC_exercise(100, seed = 1234)
+```
+
+
+
+Now in question c, we add a graph which visualizes the intervals.
+
+
+
+```{r}
+# MC - question 2 (add graph)
+
+# Function for Confidence interval table
+MC_exercise <- function(num_sim, seed){
+  
+  # set seed for reproducability
+  set.seed(seed)
+  
+  # make table to store
+  big_table <- matrix(data = 0, ncol = 5, nrow = num_sim)
+    
+  # draw random data
+    for(i in 1:num_sim){
+      samp <- rnorm(1000)
+      
+      # create data for table
+      big_table[i, 1] <- mean(samp)
+      big_table[i, 2] <- 0 - mean(samp)
+      big_table[i, 3] <- sqrt(var(samp))/sqrt(1000)
+      big_table[i, 4] <- mean(samp) - (1.96*(sqrt(var(samp))/sqrt(1000)))
+      big_table[i, 5] <- mean(samp) + (1.96*(sqrt(var(samp))/sqrt(1000)))
+      
+    }
+  
+  colnames(big_table) <- c("mean", "bias", "SE", "Lower", "Upper")
+  big_new <- big_table %>% as.data.frame() %>% 
+        mutate(Contain_TV = Lower < 0 & Upper > 0)
+  
+  # print outcome
+  limits <- c(min(big_new$Lower), max(big_new$Upper))
+  ggplot(big_new, aes((1:nrow(big_new)), mean, colour = Contain_TV)) + 
+       geom_hline(aes(yintercept = 0), col = "darkgrey", size = 1) +
+    geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+    xlab("Simulations") +
+    ylab("Mean and 95%-Confidence Interval")
+}
+
+# run with seed
+MC_exercise(100, seed = 1234)
+
+MC_exercise(100, seed = 333)
+
+MC_exercise(100, seed = 2214)
+```
+
+
+Question d asks to give an extra table with only information on the intervals that do not contain the true population value.
+
+
+```{r}
+# Question d: adding information on 'false' intervals
+
+# Function for Confidence interval table
+MC_exercise <- function(num_sim, seed){
+  
+  # set seed for reproducability
+  set.seed(seed)
+  
+  # make table to store
+  big_table <- matrix(data = 0, ncol = 5, nrow = num_sim)
+    
+  # draw random data
+    for(i in 1:num_sim){
+      samp <- rnorm(1000)
+      
+      # create data for table
+      big_table[i, 1] <- mean(samp)
+      big_table[i, 2] <- 0 - mean(samp)
+      big_table[i, 3] <- sqrt(var(samp))/sqrt(1000)
+      big_table[i, 4] <- mean(samp) - (1.96*(sqrt(var(samp))/sqrt(1000)))
+      big_table[i, 5] <- mean(samp) + (1.96*(sqrt(var(samp))/sqrt(1000)))
+      
+    }
+  
+  colnames(big_table) <- c("mean", "bias", "SE", "Lower", "Upper")
+  big_new <- big_table %>% as.data.frame() %>% 
+        mutate(Contain_TV = Lower < 0 & Upper > 0)
+  
+  # print outcome
+  limits <- c(min(big_new$Lower), max(big_new$Upper))
+  print(ggplot(big_new, aes((1:nrow(big_new)), mean, colour = Contain_TV)) + 
+       geom_hline(aes(yintercept = 0), col = "darkgrey", size = 1) +
+    geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+    xlab("Simulations") +
+    ylab("Mean and 95%-Confidence Interval"))
+  
+false_table <- big_new %>% filter(Contain_TV == "FALSE")
+print(false_table)
+}
+
+# test again
+MC_exercise(100, 622)
+
+```
+
+
