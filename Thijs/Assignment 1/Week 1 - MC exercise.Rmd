@@ -1,6 +1,8 @@
 ---
 title: "MC Simulation exercise"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 This exercise asks to do a Monte Carlo simulation on the confidence interval. 
