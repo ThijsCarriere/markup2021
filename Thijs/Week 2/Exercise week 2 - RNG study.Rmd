@@ -1,0 +1,134 @@
+---
+title: "Study design exercise - week 2"
+author: "Thijs Carriere"
+date: "30-9-2021"
+output: html_document
+---
+
+# 1. Aim/Study
+
+This study will try to find a confidence interval for an absolute mean difference between two groups, using bootstrapping
+
+# 2. Set up/standard settings
+
+Before doing anything else, we set a seed and load the packages needed for this exercise.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# set seed
+set.seed(313)
+
+# Needed packages
+require(dplyr)
+```
+
+
+# 3. Study
+
+## 3.1 Sampling and result to compare with
+
+First, we get samples and their difference statistics, after that we try to approximate those confidence intervals with bootstrapping.
+
+The samples differ 3 in their mean and have a slightly different standard deviation.
+
+```{r}
+# Getting samples with a mean difference of 3
+set.seed(313)
+sample.1 <- rnorm(50, 8, 1.15)
+sample.2 <- rnorm(50, 5, 1)
+
+# Statistics by t-test
+main.t <- t.test(sample.1, sample.2)$statistic
+main.conf <- t.test(sample.1, sample.2)$conf
+main.md <- abs(mean(sample.1) - mean(sample.2))
+main.p <- t.test(sample.1, sample.2)$p.val
+
+# Organize outcomes
+outcomes <- list(main.md, main.conf, main.t, main.p)
+names(outcomes) <- c("Mean difference", "Confidence interval", "T-statistic", "Significance")
+print(outcomes)
+```
+
+
+## 3.2 Bootstrapped interval
+
+The obtained confidence interval is now tried to be replicated with bootstrapping.  
+
+
+```{r}
+# create storing-object
+Stat.table <- matrix(data = NA, nrow = 100000, ncol = 1)
+
+# run simulation
+for(i in 1:100000){
+  boot.group.1 <- sample(sample.1, 50, replace = T)
+  boot.group.2 <- sample(sample.2, 50, replace = T)
+  
+  Stat.table[i, 1] <- mean(boot.group.1) - mean(boot.group.2)
+}
+
+# Get confidence intervals
+quantile(Stat.table[,1], probs = c(.025, .5, .975))
+
+```
+
+
+# 4. Replication of findings
+
+## 4.1 replication under other seed
+
+Now running everything under another seed:
+
+```{r}
+# Set new seed for comparison
+set.seed(144)
+
+# run simulation
+for(i in 1:100000){
+  boot.group.1 <- sample(sample.1, 50, replace = T)
+  boot.group.2 <- sample(sample.2, 50, replace = T)
+  
+  Stat.table[i, 1] <- mean(boot.group.1) - mean(boot.group.2)
+}
+
+# Get confidence intervals
+quantile(Stat.table[,1], probs = c(.025, .5, .975))
+
+```
+
+
+## 4.2 replication with other numbers
+
+Now, try it once more with a higher number of samples
+
+```{r}
+# Set new seed for comparison
+set.seed(145)
+
+# Make a new table so everything can be stored
+Stat.table <- matrix(data = NA, nrow = 1000000, ncol = 1)
+
+# run simulation
+for(i in 1:1000000){
+  boot.group.1 <- sample(sample.1, 50, replace = T)
+  boot.group.2 <- sample(sample.2, 50, replace = T)
+  
+  Stat.table[i, 1] <- mean(boot.group.1) - mean(boot.group.2)
+}
+
+# Get confidence intervals
+quantile(Stat.table[,1], probs = c(.025, .5, .975))
+```
+
+
+# 5. Conclusions
+
+We see that there are some decimals difference, but that the conclusions about a difference would not change. The small sample makes that the intervals are still quite seed dependent (even with high sample sizes as 100000). With higher numbers of samples, we approach the real confidence interval values.
+
+---
+
+# 6. Session information
+
+```{r}
+sessionInfo()
+```
+
