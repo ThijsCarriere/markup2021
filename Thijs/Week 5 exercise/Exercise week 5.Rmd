@@ -1,0 +1,147 @@
+---
+title: "Exercise week 5 - Presentation about me"
+author: "Thijs Carriere"
+date: "24-11-2021"
+output: 
+    ioslides_presentation:
+      logo: UU_logo.jpg
+bibliography: referencesmu5.bib
+csl: apa.csl
+---
+
+## Outline
+1. Still figure
+2. Interactive table
+3. Interactive figure or movie
+4. Multiple columns
+5. Equations
+6. R code
+7. References
+
+## Used packages
+```{r message=FALSE, warning=FALSE}
+library(tidyverse) # manipulation for frames or tables
+library(DiagrammeR) # Figures/diagrams
+library(DT) # for tables
+```
+
+
+## Still figure
+
+
+<center>
+This is me
+
+<img src = TCarr.jpg width = 35% />
+
+Thijs Carrière
+</center>
+
+## Another still figure
+
+<center>
+```{r echo = FALSE}
+grViz("
+  digraph {
+    layout = twopi
+    subgraph cluster1 {
+    
+    node [shape = circle,
+          color = mediumvioletred]
+    Thijs 
+    
+    node [shape = diamond,
+          color = mediumslateblue]
+    Korfbal
+    
+    node [shape = diamond,
+          color = mediumslateblue]
+    WIDM
+    
+    node [shape = diamond,
+          color = mediumslateblue]
+    boardgames
+    
+    edge[color = purple]
+    Thijs -> WIDM
+    
+    edge[color = purple]
+    Thijs -> Korfbal
+    
+    edge[color = purple]
+    Thijs -> boardgames
+    }
+  }")
+```
+
+</center>
+
+## Interactive table
+
+```{r cache=TRUE, echo = FALSE, out.width="50%"}
+setwd("~/Studie/Master/MSBBSS 10 - Markup/Markup_21/Week 5 exercise")
+dat1 <- read.csv("winter.csv")
+
+dat1 <- dat1 %>% select(Athlete, Country, Gender, Year, Medal, Sport, Discipline, Event, City)
+
+datatable(dat1, options = list(pageLength = 4, scrollY = TRUE))
+
+# Want to rescale the table, but doesn't work yet ...
+```
+
+Since I like to follow sports, here are some random Olympic facts in a table!
+
+## Aftermovie summer camp
+
+<center>
+<video width="640" height="480" controls>
+  <source src="WIDMmov.mp4" type="video/mp4">
+</video>
+</center>
+
+## Columns & Equations{.columns-2 .smaller}
+
+$$\begin{aligned}
+6\lambda &= 6\alpha + 6\\
+\beta + 4 - 2\gamma &= 3\alpha\\
+2 + 2\alpha &= 6\\
+7\gamma &= 14\lambda + 8\alpha - 9\\
+\end{aligned}$$
+
+Find $\beta$
+<br><br>
+<br>
+<br>
+
+Also, picture of my cat on the right to show that I can work in columns
+
+<center>
+<img src = kwartje.jpg width = 80%>
+</center>
+
+
+## Code not run
+You could obtain $\beta$ with R as a calculator
+
+```{r eval = FALSE}
+a <- (6-2)/2
+l <- (6*a + 6)/6
+g <- (14*l + 8*a - 9)/7
+b <- 3*a - 4 + 2*g
+
+print(b)
+
+# spoiler: b should be 16
+```
+
+## Some text to include references
+
+Thesis relevant topics with literature:
+
+<br> - Multilevel DIF detection [@dell2021investigating; @gao2019comparison]
+
+<br> - Technology Enhanced Items [@bryant2017developing; @burkhardt2003computer]
+
+
+
+## And a literature list
